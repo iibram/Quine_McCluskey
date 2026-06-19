@@ -3,22 +3,22 @@
 #include <cmath>
 
 /*
-Examples
+Examples: The (H) at the end of the y bitstring signals, that a heuristical evaluation must be performed to solve the minimization
 
 8 Bit				16 Bit						32 Bit
-y = "10011001"		y = "1001011010110101"		y = "10101010101010101111000011110000"
+y = "10011001"		y = "1001011010110101" (H)	y = "10101010101010101111000011110000"
 y = "01101010"		y = "0110100011110001"		y = "11110000000011111111000000001111"
-y = "11100010"		y = "1111000011110000"		y = "10011100111100001001110011110000"
+y = "11100010"		y = "1111000011110000"		y = "10011100111100001001110011110000" (H)
 
 
 HARD ONES:
-0101001111001111						1011110000110101
+0101001111001111 (H)					1011110000110101 (H)
 1  3  6  7  8  9  12  13  14  15		0  2  3  4  5  10  11  13  15
 2  2  1  2  1  2   2   2   2   2		2  2  1  2  2   1   2   2   2
 	  x     x								  x         x
 
 CHAMPIONS LEAGUE:
-0111110101101110
+0111110101101110 (H)
 1  2  3  4  5  7  9  10  12  13  14
 2  2  2  1  3  1  1   2   2   2   2
 		 X     X  X
@@ -26,8 +26,6 @@ CHAMPIONS LEAGUE:
 
 /**
  * @brief $ ./main <y-string to minimize> <ID of the y-string for VHDL | leaving empty sets a default ID>
- *
- * @note When using VS Code auto launch (F5) you will have two prompts secured by default values. (I) y-string (II) ID of the y-string
  */
 int main(int argc, char* argv [])
 {
@@ -49,13 +47,13 @@ int main(int argc, char* argv [])
 
 		else
 		{
-			std::cout << "Length of y-string is NOT a power of two !" << std::endl;
+			std::cout << "Length of y-string is NOT a power of two !" << "\n";
 			return -1;
 		}
 	}
 	else
 	{
-		std::cout << "A y-string was NOT passed !" << std::endl;
+		std::cout << "A y-string was NOT passed !" << "\n";
 		return -1;
 	}
 

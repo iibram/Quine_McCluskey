@@ -1,24 +1,24 @@
 #include "QMC.h"
 
 
-// ===================================================================================================================
-// 													M i n _ T e r m
-// ===================================================================================================================
+// ===========================================================================================================================================
+// 																M i n _ T e r m
+// ===========================================================================================================================================
 
 /**
- * @brief Custom constructor
+ * @brief Custom constructor.
  * @param str_bits the current binary representation of this Min_Term
  */
-QMC::Min_Term::Min_Term(std::string str_bits) : s_bits(str_bits) {}
+QMC::Min_Term::Min_Term(std::string& str_bits) : s_bits(str_bits) {}
 
 /**
- * @brief Inserts the given (single) decimal to the `std::set` decimals of this `Min_Term`
+ * @brief Inserts the given (single) decimal to the `std::set` decimals of this `Min_Term`.
  * @param dec the decimal value which is to insert
  */
 void QMC::Min_Term::insert_dec(unsigned short dec) { decimals.insert(dec); }
 
 /**
- * @brief Appends the given `std::set` of decimals to the `std::set` decimals of this `Min_Term`
+ * @brief Appends the given `std::set` of decimals to the `std::set` decimals of this `Min_Term`.
  * @param decs a `std::set` of decimals
  */
 void QMC::Min_Term::append_decimals(std::set<unsigned short> decs)
@@ -27,8 +27,8 @@ void QMC::Min_Term::append_decimals(std::set<unsigned short> decs)
 }
 
 /**
- * @brief Generates a `std::string` of the decimal values this `Min_Term` represents
- * @param mode `TABLE`= 0 or `PHASE`= 2
+ * @brief Generates a `std::string` of the decimal values this `Min_Term` represents.
+ * @param mode `TABLE`=0 or `PHASE`=2. (Values also used to format the specific texts)
  * @return a `std::string` of the decimal values this `Min_Term` represents
  */
 std::string QMC::Min_Term::generate_sdecs(uint8_t mode) const
@@ -52,7 +52,7 @@ std::string QMC::Min_Term::generate_sdecs(uint8_t mode) const
 }
 
 /**
- * @brief Generates and sets the `LaTeX` and the `VHDL` code  representations of this `Min_Term` for additional usage
+ * @brief Generates and sets the `LaTeX` and the `VHDL` code  representations of this `Min_Term` for additional usage.
  * @param vsize `QMC::vars_size` goes in. The amount of variables (exp of the y-string length)
  */
 void QMC::Min_Term::set_str_reps(int vsize)
@@ -65,7 +65,7 @@ void QMC::Min_Term::set_str_reps(int vsize)
 
 		std::string latex_x = "\\mathrm{x}_" + std::to_string(vsize);
 		std::string vhdl_x = "x" + std::to_string(vsize--);
-		s_latex += (c == '0' ? "\\bar{" + latex_x + "}" : latex_x);
+		s_latex += (c == '0' ? "\\overline{" + latex_x + "}" : latex_x);
 
 		if (!first) s_vhdl += " and ";
 		first = false;
@@ -76,7 +76,7 @@ void QMC::Min_Term::set_str_reps(int vsize)
 }
 
 /**
- * @brief CUSTOM COMPARATOR: Overloads the `<` operator for enabling customized sorting in a `std::set` of `Min_Term`s
+ * @brief CUSTOM COMPARATOR: Overloads the `<` operator for enabling customized sorting in a `std::set` of `Min_Term`s.
  * @param other another `Min_Term`
  * @return `bool`
  */
@@ -88,13 +88,13 @@ bool QMC::Min_Term::operator<(const Min_Term& other) const
 }
 
 
-// ===================================================================================================================
-// 														 Q M C
-// ===================================================================================================================
+// ===========================================================================================================================================
+// 																	Q M C
+// ===========================================================================================================================================
 
 /**
- * @brief Custom constructor: Starts immediately to build the essential base group by the passed (pre checked)
- * parameters and proceeds through the Quine-McCluskey tabular method
+ * @brief Custom constructor: Starts immediately to build the essential base group by the passed (pre checked) parameters and proceeds through
+ * the Quine-McCluskey tabular method.
  *
  * @param y the output bit stream of the underlaying logic table which is to minimize
  * @param y_length the length of that output string (is a power of 2)
@@ -133,12 +133,12 @@ QMC::QMC(std::string y, size_t y_length, int vars_size, std::string& id) : vars_
 	print_VHDL_output(id);
 }
 
-// ---------------------------------------------- ESSENTIAL FUNCTIONS ------------------------------------------------
+// ---------------------------------------------------------- ESSENTIAL FUNCTIONS ------------------------------------------------------------
 
 /**
- * @brief Builds recursively all the groups of any phase of the Quine-McCluskey tabular method, detects prime
- * implicants and feeds the `std::stringsstream` with relative informations. After all recursions has terminated,
- * a single console out is called to output the entire phase tables at once.
+ * @brief Builds recursively all the groups of any phase of the Quine-McCluskey Tabular Method (QMC), detects prime implicants and feeds the
+ * `std::stringsstream` with relative informations. After all recursions has terminated, a single console out is called to output the entire
+ * phase tables at once.
  */
 void QMC::process_phase()
 {
@@ -213,14 +213,15 @@ void QMC::process_phase()
 }
 
 /**
- * @brief Computes the spectrum (covered span) of any `PRIME_IMPL`, inserts these covered `Min_Term`s also as values
- * to the mapped `Info` struct. If any entry of the spectrum counts a single `Min_Term` it covers, a `CORE_IMPL` is
- * detected and is marked as one. Also the unfinished intermediate "Implicants Table" is output to the console.
+ * @brief Computes the spectrum (covered span) of any `PRIME_IMPL`, inserts these covered `Min_Term`s also as values to the mapped
+ * `Info` struct. If any entry of the spectrum counts a single `Min_Term` it covers, a `CORE_IMPL` is detected and is marked as one.
+ * Also the unfinished intermediate "Implicants Table" is output to the console, when heuristics are to process.
  */
 void QMC::compute_spectrum()
 {
 	bool heuristic_needed = false;
 
+	// Phase 1: Build up the spectrum
 	// each appearance of the decimal value of a Min_Term (covered by a PRIME_IMPL) is becoming
 	// a KEY of the spectrum and the covering PRIME_IMPL is inserted to the set (Info)
 	for (auto& prime : primes)
@@ -229,7 +230,7 @@ void QMC::compute_spectrum()
 			spectrum[dec].covering_primes.insert(&prime);
 	}
 
-	// detecting CORE_IMPLs and marking the KEYS as clearly covered (important for the heuristics !)
+	// Phase 2: Detect all CORE_IMPLs and mark their Min_Terms as clearly covered
 	for (auto const& [key, info] : spectrum)
 	{
 		if (info.covering_primes.size() == 1)
@@ -240,8 +241,16 @@ void QMC::compute_spectrum()
 			for (auto dec : core->decimals)
 				spectrum[dec].covered = true;
 		}
-		else
+	}
+
+	// Phase 3: Check whether there is still any uncovered minterm at all!
+	for (auto const& [key, info] : spectrum)
+	{
+		if (!info.covered)
+		{
 			heuristic_needed = true;
+			break;
+		}
 	}
 
 	if (heuristic_needed)
@@ -249,14 +258,14 @@ void QMC::compute_spectrum()
 }
 
 /**
- * @brief The elimination algorithm (NP-Problem): Is finding and processing for the uncovered `Min_Term`s the very best
- * fit of a coverage. If there is just a single uncovered `Min_Term` found, the best fit would be the minimum span of a
- * `Min_Term` to cover this one, too. If there is more than one uncovered `Min_Term`s found, a NP-Problem is to solve.
+ * @brief The elimination algorithm (NP-Problem): Is finding and processing for the uncovered `Min_Term`s the very best fit of a coverage.
+ * If there is just a single uncovered `Min_Term` found, the best fit would be the minimum span of a `Min_Term` to cover this one, too.
+ * If there is more than one uncovered `Min_Term`s found, a NP-Problem is to solve.
  *
- * In a candidate system (each round) it is selected the `PRIME_IMPL` with the widest span to cover the highest number
- * of uncovered `Min_Term`s. If a single leading candidate is found, the competition ends for that round. To break a tie
- * situation, the `PRIME_IMPL` with the minimum span is now winning the competition for this round. However, the winner
- * is marked as a `CORE_IMPL`. The function terminates when there is no uncovered `Min_Term`s left.
+ * In a candidate system (each round) it is selected the `PRIME_IMPL` with the widest span to cover the highest number of uncovered
+ * `Min_Term`s. If a single leading candidate is found, the competition ends for that round. To break a tie situation, the `PRIME_IMPL`
+ * with the minimum span is now winning the competition for this round. However, the winner is marked as a `CORE_IMPL`. The function
+ * terminates when there is no uncovered `Min_Term`s left.
  */
 void QMC::process_minimum_required_Min_Terms()
 {
@@ -328,10 +337,10 @@ void QMC::process_minimum_required_Min_Terms()
 	}
 }
 
-// ----------------------------------------------- Output Functions --------------------------------------------------
+// ----------------------------------------------------------- Output Functions --------------------------------------------------------------
 
 /**
- * @brief Prints the "Implicants Table" of the QMC tabular method to the console
+ * @brief Prints the "Implicants Table" of the Quine-McCluskey Tabular Method (QMC) to the console.
  */
 void QMC::print_implicant_table(bool table_mode)
 {
@@ -367,7 +376,6 @@ void QMC::print_implicant_table(bool table_mode)
 		bool started = false;
 		bool ended = false;
 		bool single = false;
-		//uint8_t code = 0;
 
 		for (auto const& [key, info] : spectrum)
 		{
@@ -403,17 +411,17 @@ void QMC::print_implicant_table(bool table_mode)
 	}
 	ss << std::format("\n{:-^{}}+{:-^{}}-\n", "", LHS_WIDTH, "", RHS_WIDTH);
 	if (table_mode == FINAL_TABLE)
-		ss << LEGEND_GRN << " covered  " << LEGEND_RED << " uncovered  " << LEGEND_YLW << " reason of being CORE_IMPL\n\n";
+		ss << LEGEND_GRN << " Essential  " << LEGEND_RED << " Redundant/Unresolved  " << LEGEND_YLW << " Core Trigger\n\n";
 
 	ss_out_n_reset();
 }
 
 /**
- * @brief "Parses" the calculated minimized function and prints it as a LaTeX instruction to the console
+ * @brief "Parses" the calculated minimized function and prints it as a LaTeX instruction to the console.
  */
 void QMC::print_LaTeX_output()
 {
-	ss << "=========== copy/paste this for LaTeX ===========\n$f(";
+	ss << "========== Generated LaTeX Source Code ==========\n$f(";
 
 	int b = vars_size;
 	while (b > 0)
@@ -437,10 +445,9 @@ void QMC::print_LaTeX_output()
 }
 
 /**
- * @brief "Parses" the calculated minimized function and prints it as a VHDL instruction to the console.
- * Although the minimized function should work properly, in hardware design it is not recommended to drop
- * such big function at once. For an 8 bit wide small logic output function y passed to this app, it could
- * be a good solution.
+ * @brief "Parses" the calculated minimized function and prints it as a VHDL instruction to the console. Although the minimized function
+ * should work properly, in hardware design it is not recommended to drop such big function at once. For an 8 bit wide small logic output
+ * function y passed to this app, it could be a good solution.
  *
  * @param variable the identifier of the logical signal (`std_logic`) inside the VHDL design
  */
@@ -448,7 +455,7 @@ void QMC::print_VHDL_output(std::string& variable)
 {
 	const unsigned short indent = (unsigned short)variable.length() + 4;
 
-	ss << "============ copy/paste this for VHDL ===========\n";
+	ss << "============== Generated VHDL Logic =============\n";
 	ss << variable << " <= ";
 
 	bool first_term = true;
@@ -459,13 +466,9 @@ void QMC::print_VHDL_output(std::string& variable)
 		std::string term = prime.s_vhdl;
 
 		if (!first_term)
-		{
 			ss << "\n" << std::string(indent, ' ') << "or ";
-		}
 		else
-		{
 			first_term = false;
-		}
 
 		ss << term;
 	}
@@ -473,11 +476,11 @@ void QMC::print_VHDL_output(std::string& variable)
 	ss_out_n_reset();
 }
 
-// ------------------------------------------------ Helper Functions -------------------------------------------------
+// ------------------------------------------------------------ Helper Functions -------------------------------------------------------------
 
 /**
- * @brief Compares two given string representations of logic terms (e.g. "1001") from left to right and returns either
- * the index of a detected single different "bit"; or -1, when there is no difference or more than one
+ * @brief Compares two given string representations of logic terms (e.g. "1001") from left to right and returns either the index of a detected
+ * single different "bit"; or -1, when there is no difference or more than one.
  *
  * @param sbits1 the "bit" string of a logical term
  * @param sbits2 the "bit" string of another logical term
@@ -502,7 +505,7 @@ int QMC::get_diff_idx(std::string sbits1, std::string sbits2) const
 }
 
 /**
- * @brief Checks and returns if the given `Min_Term` already exists in the given group
+ * @brief Checks and returns if the given `Min_Term` already exists in the given group.
  * @param mt the `Min_Term` to check
  * @param group the group to check
  * @return `bool`
@@ -510,11 +513,11 @@ int QMC::get_diff_idx(std::string sbits1, std::string sbits2) const
 bool QMC::already_exists(const Min_Term& mt, const std::vector<Min_Term>& group)
 {
 	return std::any_of(group.begin(), group.end(), [&](const Min_Term& existing)
-		{ return existing.decimals == mt.decimals; });
+	{ return existing.decimals == mt.decimals; });
 }
 
 /**
- * @brief Appends the next phase table to the `std::stringstream`
+ * @brief Appends the next phase table to the `std::stringstream`.
  */
 void QMC::append_to_ss()
 {
@@ -537,11 +540,11 @@ void QMC::append_to_ss()
 }
 
 /**
- * @brief Outputs the buffer of the `std::stringstream`, resets its buffer and clears its flags for a clean reusage
+ * @brief Outputs the buffer of the `std::stringstream`, resets its buffer and clears its flags for a clean reusage.
  */
 void QMC::ss_out_n_reset()
 {
-	std::cout << ss.str() << std::endl;
+	std::cout << ss.str() << "\n";
 	ss.str("");
 	ss.clear();
 }
