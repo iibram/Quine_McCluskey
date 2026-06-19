@@ -1,4 +1,4 @@
-# Quine-McCluskey Demonstrator (C++20)
+# Quine-McCluskey Logic Minimizer (Heuristic Optimized) (C++20)
 
 ![C++](https://img.shields.io/badge/C%2B%2B-20-blue.svg) ![License](https://img.shields.io/badge/License-MIT-green.svg) ![Purpose](https://img.shields.io/badge/Purpose-Educational-orange.svg) ![Category](https://img.shields.io/badge/Category-Logic%20Minimization-darkgreen.svg) ![OS](https://img.shields.io/badge/OS-Windows%20%26%20Linux-purple.svg)
 
@@ -27,7 +27,7 @@ Instead of compressing the Quine-McCluskey algorithm into an opaque, bitwise "bl
 * **Instant VHDL Logic Generator:** Generates clean, syntactically correct concurrent VHDL signal assignments (`and`, `or`, `not`) with customizable signal names—ready for immediate deployment in FPGA tools like AMD Vivado or Intel Quartus.
 * **Instant LaTeX Export:** Outputs the minimized Boolean equation as a beautifully formatted LaTeX string, optimized for scientific papers, assignments, or documentation.
 * **Cross-Platform CLI Comfort:** Identical execution and formatting across **Windows** and **Linux** (e.g., CachyOS) with robust error-handling.
-* **Rigorous Input Validation:** The `main()` entry point thoroughly audits all command-line arguments, verifying that the input string strictly adheres to a binary truth-table length ($2^x$, where $x \in \text{size\_t}$) before memory allocation.
+* **Rigorous Input Validation:** The `main()` entry point thoroughly audits all command-line arguments, verifying that the input string strictly adheres to a binary truth-table length ($2^x$, where $x \in$ `size_t`) before memory allocation.
 
 ---
 
@@ -123,7 +123,7 @@ $$
 ---
 
 > ## ⚠️ VHDL Design Note
-While the generated VHDL code is fully syntactical and ready to run, this tool is meant to assist structural planning. In professional FPGA engineering, relying on overly deep, unpipelined combinatorial logic strings can degrade timing performance. Use the output responsibly as part of a well-designed synchronous architecture.
+> While the generated VHDL code is fully syntactical and ready to run, this tool is meant to assist structural planning. In professional FPGA engineering, relying on overly deep, unpipelined combinatorial logic strings can degrade timing performance. Use the output responsibly as part of a well-designed synchronous architecture.
 
 ---
 
