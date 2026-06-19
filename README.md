@@ -98,15 +98,6 @@ When feeding the application with the 16-bit sequence "1011110000110101", it eff
 <p align="center">
 	<img src="image/output_example.png" alt="Phases" width="600">
 </p>
-<!-- <p align="center">
-	<img src="images/phases.png" alt="Phases" width="350">
-</p>
-<p align="center">
-	<img src="images/tables.png" alt="Implicants Table" width="500">
-</p>
-<p align="center">
-	<img src="images/codes.png" alt="LaTeX & VHDL Codes" width="500">
-</p> -->
 
 ### Resulting Mathematical Expression
 
