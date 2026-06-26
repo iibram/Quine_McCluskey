@@ -18,7 +18,7 @@ QMC::Min_Term::Min_Term(std::string& str_bits) : s_bits(str_bits) {}
 void QMC::Min_Term::insert_dec(unsigned short dec) { decimals.insert(dec); }
 
 /**
- * @brief Appends the given `std::set` of decimals to the `std::set` decimals of this `Min_Term`.
+ * @brief Tries to insert each decimal of the given `std::set` to the `std::set` of decimals of this `Min_Term`.
  * @param decs a `std::set` of decimals
  */
 void QMC::Min_Term::append_decimals(std::set<unsigned short> decs)
@@ -178,7 +178,6 @@ void QMC::process_phase()
 		}
 
 		// adding PRIME_IMPLs to primes (the unchecked Terms per phase)
-		// + adding all decimals of a prime into all_prime_decs set
 		for (auto& mt : val)
 		{
 			if (!mt.used)
@@ -215,7 +214,7 @@ void QMC::process_phase()
 /**
  * @brief Computes the spectrum (covered span) of any `PRIME_IMPL`, inserts these covered `Min_Term`s also as values to the mapped
  * `Info` struct. If any entry of the spectrum counts a single `Min_Term` it covers, a `CORE_IMPL` is detected and is marked as one.
- * Also the unfinished intermediate "Implicants Table" is output to the console, when heuristics are to process.
+ * Also the unfinished intermediate "Implicants Table" is output to the console, only when heuristics are to process.
  */
 void QMC::compute_spectrum()
 {
@@ -340,14 +339,15 @@ void QMC::process_minimum_required_Min_Terms()
 // ----------------------------------------------------------- Output Functions --------------------------------------------------------------
 
 /**
- * @brief Prints the "Implicants Table" of the Quine-McCluskey Tabular Method (QMC) to the console.
+ * @brief Prints the colorful "Implicants Table" of the Quine-McCluskey Tabular Method (QMC) to the console.
+ * @param table_mode `FINAL_TABLE` or NOT.
  */
 void QMC::print_implicant_table(bool table_mode)
 {
 	uint8_t LHS_WIDTH = 16;
 	uint8_t RHS_WIDTH = spectrum.size() << 2;		// spectrum.size() = number of decimals covered by the PRIME IMPLs (4 = COL_WIDTH)
 	uint8_t RHS_HALF = (RHS_WIDTH >> 1) - 1;		// for specific centering
-	uint8_t COL_WIDTH = 4;							// space for a decimal (_1__ / _10_ / _100) and a (_X__) alligns with the leading number
+	uint8_t COL_WIDTH = 4;							// space for a decimal. (_1__ / _10_ / _100) and a (_X__) alligns with the leading number
 	bool safe = (spectrum.size() > 3);
 
 	if (table_mode == FINAL_TABLE)
@@ -368,7 +368,7 @@ void QMC::print_implicant_table(bool table_mode)
 
 	for (auto& prime : primes)
 	{
-		std::string_view COLOR = (prime.type == CORE_IMPL ? GRN : RED);
+		std::string_view COLOR = (prime.type == CORE_IMPL ? GRN : RED); 	// (GRN: essential, RED: redundant / unresovled)
 		ss << COLOR;
 		ss << "\n" << std::format("{:>15}", std::format("[{}]", prime.generate_sdecs(TABLE)));
 		ss << RST << " | " << COLOR;
@@ -382,16 +382,16 @@ void QMC::print_implicant_table(bool table_mode)
 			single = (info.covering_primes.size() == 1);
 			ss << COLOR;
 
-			if (prime.decimals.contains(key))			// prime covers the decimal ?
+			if (prime.decimals.contains(key))								// prime covers the decimal ?
 			{
-				if (key == prime.span_end)				// span ends
+				if (key == prime.span_end)									// span ends
 				{
 					ss << (started ? "-" : " ");
 					if (single) ss << YLW;
 					ss << "X";
 					ended = true;
 				}
-				else if (key == prime.span_beg)			// span begins
+				else if (key == prime.span_beg)								// span begins
 				{
 					if (single) ss << YLW << " X" << COLOR << "--";
 					else ss << " X--";
@@ -403,7 +403,7 @@ void QMC::print_implicant_table(bool table_mode)
 				else
 					ss << "-X--";
 			}
-			else if (!ended)							// when doesn't cover
+			else if (!ended)												// when doesn't cover
 				ss << (started ? "----" : "    ");
 
 			ss << RST;

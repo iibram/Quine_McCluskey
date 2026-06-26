@@ -6,6 +6,28 @@ A high-performance, hardware-aware C++20 command-line tool designed to minimize 
 
 ---
 
+## 📊 Terminal Output Showcase
+
+When feeding the application with the 16-bit sequence "1011110000110101", it effortlessly walks through the reduction steps and generates the following terminal feedback:
+
+<p align="center">
+	<img src="image/output_example.png" alt="Phases" width="600">
+</p>
+
+### Resulting Mathematical Expression
+
+$$
+\begin{aligned}
+f(x_4,x_3,x_2,x_1)=
+\overline{\mathrm{x}_4}\overline{\mathrm{x}_3}\overline{\mathrm{x}_1}
+\lor\overline{\mathrm{x}_4}\mathrm{x}_3\overline{\mathrm{x}_2}
+\lor\mathrm{x}_4\mathrm{x}_3\mathrm{x}_1
+\lor\overline{\mathrm{x}_3}\mathrm{x}_2
+\end{aligned}
+$$
+
+---
+
 ## 💡 Design Philosophy: Human-Readable & Educational
 
 Instead of compressing the Quine-McCluskey algorithm into an opaque, bitwise "black box," this implementation is designed as a visual simulator. It mirrors the exact chronological steps a human engineer takes when solving the problem on paper.
@@ -24,7 +46,7 @@ Instead of compressing the Quine-McCluskey algorithm into an opaque, bitwise "bl
   2. *Multiple Uncovered Terms:* Selects the candidate with the *widest covering span*.
   3. *Span Tie-Breaker:* Chooses the candidate closest in mathematical proximity to the target term.
   4. *Final Tie-Breaker:* Strict deterministic fallback to the first evaluated implicant.
-* **Instant VHDL Logic Generator:** Generates clean, syntactically correct concurrent VHDL signal assignments (`and`, `or`, `not`) with customizable signal names—ready for immediate deployment in FPGA tools like AMD Vivado or Intel Quartus.
+* **Instant VHDL Logic Generator:** Generates clean, syntactically correct concurrent VHDL signal assignments (`and`, `or`, `not`) with customizable output signal name—ready for immediate deployment in FPGA tools like AMD Vivado or Intel Quartus.
 * **Instant LaTeX Export:** Outputs the minimized Boolean equation as a beautifully formatted LaTeX string, optimized for scientific papers, assignments, or documentation.
 * **Cross-Platform CLI Comfort:** Identical execution and formatting across **Windows** and **Linux** (e.g., CachyOS) with robust error-handling.
 * **Rigorous Input Validation:** The `main()` entry point thoroughly audits all command-line arguments, verifying that the input string strictly adheres to a binary truth-table length ($2^x$, where $x \in$ `size_t`) before memory allocation.
@@ -88,28 +110,6 @@ The compiled executable expects targeted parameters at launch to ensure a strict
 
 * **`argv[1]` (`y_bitstring`):** The output vector of your truth table, passed as a continuous binary string (e.g., 1011110000110101). The string length must be an exact power of 2, theoretically limited only by your system's available RAM.
 * **`argv[2]` (`vhdl_signal_name`):** *Optional.* Defines the identifier for the exported VHDL signal assignment. Defaults to "sig_y".
-
----
-
-## 📊 Terminal Output Showcase
-
-When feeding the application with the 16-bit sequence "1011110000110101", it effortlessly walks through the reduction steps and generates the following terminal feedback:
-
-<p align="center">
-	<img src="image/output_example.png" alt="Phases" width="600">
-</p>
-
-### Resulting Mathematical Expression
-
-$$
-\begin{aligned}
-f(x_4,x_3,x_2,x_1)=
-\overline{\mathrm{x}_4}\overline{\mathrm{x}_3}\overline{\mathrm{x}_1}
-\lor\overline{\mathrm{x}_4}\mathrm{x}_3\overline{\mathrm{x}_2}
-\lor\mathrm{x}_4\mathrm{x}_3\mathrm{x}_1
-\lor\overline{\mathrm{x}_3}\mathrm{x}_2
-\end{aligned}
-$$
 
 ---
 
